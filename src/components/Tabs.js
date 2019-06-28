@@ -3,9 +3,9 @@
 let selected_ = null
 
 class Tabs extends HTMLElement {
-  constructor ({ innerHTML }) {
+  constructor ({ tabsData }) {
     super()
-    this.innerHTML = innerHTML
+    this._setTabs(tabsData)
     let shadowRoot = this.attachShadow({ mode: 'open' })
     shadowRoot.innerHTML = `
     <style>
@@ -19,7 +19,7 @@ class Tabs extends HTMLElement {
       #panels {
         box-shadow: 0 2px 2px rgba(0, 0, 0, .3);
         background: rgba(255, 255, 255, 0.8);
-        padding: 16px;
+        padding: 16px 32px;
         height: 250px;
         overflow: auto;
       }
@@ -107,6 +107,16 @@ class Tabs extends HTMLElement {
     const tabsSlot = this.shadowRoot.querySelector('#tabsSlot')
     tabsSlot.removeEventListener('click', this._boundOnTitleClick)
     tabsSlot.removeEventListener('keydown', this._boundOnKeyDown)
+  }
+
+  _setTabs (tabsData) {
+    let tabs = ''
+    let panels = ''
+    tabsData.forEach(({ title, content }) => {
+      tabs += `<button slot="title" selected>${title}</button>`
+      panels += `<section slot="content">${content}</section>`
+    })
+    this.innerHTML = tabs + panels
   }
 
   _onTitleClick (e) {
